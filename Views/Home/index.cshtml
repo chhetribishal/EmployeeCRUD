@@ -1,0 +1,201 @@
+﻿
+@{
+    ViewBag.Title = "EmployInfo";
+}
+
+<h2>EmployInfo</h2>
+
+<script src="~/Scripts/jquery-3.4.1.js"></script>
+<table id="tab1" width="400px" boder="2">
+    <tr>
+        <th>ID</th>
+        <th>EmployeeName</th>
+        <th>Salary</th>
+    </tr>
+</table>
+<hr />
+
+<h3>Add Employee</h3>
+<div >
+    ID:
+    <input type="text" name="id" id="id" vlaue="" />
+    <br />
+    <br />
+    EmployeeName:
+    <input type="text" name="name" id="name" value="" />
+    <br />
+    <br />
+    Salary:
+    <input type="number" name="salary" id="salary" value="" />
+    <br />
+    <br />
+
+</div>
+
+<input type="button" name="btn1" id="btn1" value="Add Employee" />
+<input type="button" name="btn2" id="btn2" value="Update Employee" />
+<input type="button" name="btn3" id="btn3" value="Delete Employee" />
+
+
+<script>
+    $(document).ready(function () {
+
+        $("#tab1").css("display", "none");
+        $.getJSON("/api/sw_tbl_employee/", function (data) {
+            $("#tab1").css("display", "block");
+            $.each(data, function (key, val) {
+                $("<tr><td>" + val.Employee_ID + "</td><td>" + val.Employee_Name + "</td><td>" + val.Salary + "</td></tr>").appendTo($("#tab1"));
+
+
+            })
+        })
+        //POST
+        $("#btn1").click(function () {
+            var name = $("#name").val();
+            var salary = $("#salary").val();
+            
+            $.ajax({
+
+                type: "POST",
+
+                contentType: "application/json;charset=utf-8",
+
+                url: "/api/sw_tbl_employee/",
+
+                data: JSON.stringify({
+
+
+
+                    Employee_Name: name,
+
+                    Salary: salary
+
+                
+
+
+                }),
+
+
+                dataType: "JSON",
+
+                success: function (data) {
+                    $("#tab1").find("tr:gt(0)").remove();
+                    $.getJSON("/api/sw_tbl_employee/", function (data) {
+                        $("#tab1").css("display", "block");
+                        $.each(data, function (key, val) {
+                            $("<tr><td>" + val.Employee_ID + "</td><td>" + val.Employee_Name + "</td><td>" + val.Salary + "</td></tr>").appendTo($("#tab1"));
+
+
+                        })
+
+                    })
+
+                    clearInput();
+
+                }
+            });
+
+
+        })
+
+        //Delete
+        $("#btn3").click(function () {
+            var id = $("#id").val();
+
+            $.ajax({
+
+                type: "DELETE",
+
+                contentType: "application/json;charset=utf-8",
+
+                url: "/api/sw_tbl_employee/" + $("#id").val(),
+
+                data: JSON.stringify({
+
+
+
+                    Employee_ID: id,
+
+
+
+
+
+                }),
+
+                dataType: "JSON",
+
+                success: function (data) {
+                    $("#tab1").find("tr:gt(0)").remove();
+                    $.getJSON("/api/sw_tbl_employee/", function (data) {
+                        $("#tab1").css("display", "block");
+                        $.each(data, function (key, val) {
+                            $("<tr><td>" + val.Employee_ID + "</td><td>" + val.Employee_Name + "</td><td>" + val.Salary + "</td></tr>").appendTo($("#tab1"));
+
+
+                        })
+
+                    })
+
+                    clearInput();
+
+                }
+            });
+
+
+        })
+
+        //Update
+        $("#btn2").click(function () {
+            var id = $("#id").val();
+            var name = $("#name").val();
+            var salary = $("#salary").val();
+            $.ajax({
+
+                type: "put",
+
+                contentType: "application/json;charset=utf-8",
+
+                url: "/api/sw_tbl_employee/" + $("#id").val(),
+
+                data: JSON.stringify({
+
+
+                    Employee_ID: id,
+                    Employee_Name: name,
+                    Salary: salary,
+
+
+
+                }),
+
+                dataType: "JSON",
+
+                success: function (data) {
+                    $("#tab1").find("tr:gt(0)").remove();
+                    $.getJSON("/api/sw_tbl_employee/", function (data) {
+                        $("#tab1").css("display", "block");
+                        $.each(data, function (key, val) {
+                            $("<tr><td>" + val.Employee_ID + "</td><td>" + val.Employee_Name + "</td><td>" + val.Salary + "</td></tr>").appendTo($("#tab1"));
+
+
+                        })
+
+                    })
+
+
+                    clearInput();
+
+                }
+            });
+
+
+        })
+    });
+
+    function clearInput() {
+        $("#id").val('');
+        $("#name").val('');
+        $("#salary").val('');
+    }
+
+</script>
